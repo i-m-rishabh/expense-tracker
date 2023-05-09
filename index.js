@@ -1,3 +1,4 @@
+let countId = 0;
 let form = document.querySelector('.form');
 form.addEventListener('submit', addExpenses);
 
@@ -13,6 +14,9 @@ function addExpenses(event){
 
     let ul = document.querySelector('#list')
     let li = document.createElement('li');
+    li.className = 'list-group-item';
+    li.id = ++countId;
+    // console.log(li);
 
     let li_expenses = document.createElement('span');
     li_expenses.className = 'li_expenses';
@@ -20,35 +24,44 @@ function addExpenses(event){
     li.appendChild(li_expenses);
 
     let li_description = document.createElement('span');
-    li_description.className = 'li_description';
+    li_description.className = 'li_description mx-2';
     li_description.appendChild(document.createTextNode(description));
     li.appendChild(li_description);
 
     let li_category = document.createElement('span');
-    li_category.className = 'li_category';
+    li_category.className = 'li_category mx-2';
     li_category.appendChild(document.createTextNode(category));
     li.appendChild(li_category);
 
     let deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn btn-danger delete';
+    deleteBtn.className = 'btn btn-danger delete me-1 float-end';
     deleteBtn.appendChild(document.createTextNode('delete'));
     li.appendChild(deleteBtn);
 
     let editBtn = document.createElement('button');
-    editBtn.className = 'btn btn-primary edit';
+    editBtn.className = 'btn btn-primary edit me-1 float-end';
     editBtn.appendChild(document.createTextNode('edit'));
     li.appendChild(editBtn);
 
     ul.appendChild(li);
     let myExpense = {
+        id: countId,
         expenses: expenses,
         description: description,
         category: category
     };
+    localStorage.setItem(countId,JSON.stringify(myExpense));
+    
+    event.target.expenses.value=null;
+    event.target.description.value=null;
+    event.target.category.value=null;
 }
 function updateList(event){
+    let id = event.target.parentElement.id;
     if(event.target.className.indexOf('delete')!=-1){
         list.removeChild(event.target.parentElement);
+        let expenses = event.target.parentElement.querySelector('.li_expenses').textContent;
+        localStorage.removeItem(id);
     }
     if(event.target.className.indexOf('edit')!=-1){
         let expenses = event.target.parentElement.querySelector('.li_expenses').textContent;
@@ -59,9 +72,6 @@ function updateList(event){
         document.querySelector('#description').value = description;
         document.querySelector('#category').value = category;
         list.removeChild(event.target.parentElement);
-
-        console.log(expenses);
-        console.log(description);
-        console.log(category);
+        localStorage.removeItem(id);
     }
 }
